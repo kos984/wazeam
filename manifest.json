@@ -10,7 +10,7 @@
   //"default_popup": "popup.html",        // optional
   //"default_title": "cartouche VIP managers"
  //},
- //"background_page": "background.html",
+ "background_page": "html/background.html",
  //"options_page": "options.html",
  "permissions": ["tabs", "http://*/*","https://*/*"],
 "content_scripts": [

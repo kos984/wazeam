@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+	
+	switch(request.method){
+		case 'getSettingsCartouche':{
+			sendResponse();//{'timeout': 2000});
+		}
+	} // end switch;
+
+});
+</script>
+</head>
+<body>
+</body>
+</html>

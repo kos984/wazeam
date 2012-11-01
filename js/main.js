@@ -12,23 +12,27 @@
 		options: { 
 			timeout: 500,
 			vipCssClass:'kos_vip_',
-			ingCssClass:'kos_ign_',
-			wazeTimer:undefined,
+			ignCssClass:'kos_ign_',
+			_wazeTimer:undefined, // timer update vips
+			_timeTimer:undefined, // timer time
 			num:1
 		},
 		// инициализация widget
 		// вносим изменения в DOM и вешаем обработчики
 		_create: function() {
+			
 			(function(_this){
-				_this.options.wazeTimer = window.setInterval(function(){
+				_this.options._wazeTimer = window.setInterval(function(){
 					//console.log(_this.options.num++);
 					_this.checkArea(_this);
 				}, _this.options.timeout);
 			})(this);
+			
 			this.element.on("click."+this.eventNamespace, function(){
 				console.log("click");
 				
 				});
+			//$('body').append("<div style='position:absolute; top:10px; left:10px;'>sdsdfsdf</div>");
 //			this.element;   // искомый объект в jQuery обёртке
 //			this.name;      // имя - expose
 //			this.namespace; // пространство – book
@@ -47,41 +51,108 @@
 		_destroy: function() {
 			//this.element.unbind('.'+this.eventNamespace);
 		},
+		//---------------------------------------------------------------------------------------------------------------------------
 		// my methods
 		checkArea:function(_this){
 			options = _this.options;
-			var elems = this.element.find('div[id=updatedBy]');
-			var elem;
-			var arr;
-			var regExpArr = /(<span[^>]*>)?(\w+\(\d+\))/g;
-			//var arr = str.html().match(/(<span[^>]*>)(\w+\(\d+\))/g);
+			var elems = this.element.find('div[id=updatedBy],div[id=createdBy],#segment-edit-general ul li'); // all elems to cheack
+			var elem; // elem to cheak from elems colection
+			var arr; // tmp var arr(["dark_lobito(4)", undefined, "dark_lobito(4)"],....)
+			var regExpArr = /(<span[^>]*>)?(\w+\(\d+\))/g; // get all mapers
+			var tmp; // tmp var
+			var SPANTEG = 1, VIPNAME = 2; // constants
+			
 			for(var i = 0, n = elems.length; i<n;i++){
 				elem = $(elems.get(i));
-				while(arr = regExpArr.exec(elem.html())){
-					
+				arr = new Array(); // arr(["dark_lobito(4)", undefined, "dark_lobito(4)"],....)
+				while(tmp = regExpArr.exec(elem.html())){
+					// get ["dark_lobito(4)", undefined, "dark_lobito(4)"]
+					// or ["dark_lobito(4)", <span[^>]*>, "dark_lobito(4)"]
+					arr.push(tmp);
 				}
-				// get ["dark_lobito(4)", undefined, "dark_lobito(4)"]
-				// or ["dark_lobito(4)", <span[^>]*>, "dark_lobito(4)"]
-				if (arr && arr[1]) // if we get span
-				{
-					//test class name
-					if(arr[1].indexOf(options.vipCssClass) > 0 || arr[1].indexOf(options.ingCssClass) > 0){
-						//console.log(arr[1].indexOf(options.vipCssClass),arr[1].indexOf(options.ingCssClass));
-						continue;
+				for (var j = 0,m = arr.length; j < m; j++){
+					if (arr[j][SPANTEG]) // if we get span
+					{
+						//test class name and if class is exist continue ...
+						if(arr[j][SPANTEG].indexOf(options.vipCssClass) > 0 || arr[j][SPANTEG].indexOf(options.ingCssClass) > 0){
+							continue;
+						}
 					}
-				}
-				//add span
-				var test_vip = arr[2].match(/\w+/)[0];
-				if (_this.vip[test_vip]){
-					elem.html(function(){ return $(this).html().replace(arr[2],'<span class='+_this.options.vipCssClass+'>'+arr[2]+'</span>'); });
-				}else if (_this.ign[test_vip]){
-					elem.html(function(){ return $(this).html().replace(arr[2],'<span class='+_this.options.ignCssClass+'>'+arr[2]+'</span>'); });
-				}
-			}
+					var test_vip = arr[j][VIPNAME].match(/\w+/)[0]; // get grom dark_lobito(4) --> dark_lobito
+					//add span
+					if (_this.vip[test_vip]){
+						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.vip[test_vip]+'" class='+_this.options.vipCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+					}else if (_this.ign[test_vip]){
+						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.ign[test_vip]+'" class='+_this.options.ignCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+					}
+				} //end for j 
+			} // end for i
 	
 			//console.log(str);
 			//clearInterval(options.wazeTimer);
 		},
+		//---------------------------------------------------------------------------------------------------------------------------
+		myTime:{
+			hours:null, minutes:null, seconds:null, elem:null,
+			_getHours:function(){
+				var currentTime = new Date();
+				this.hours = currentTime.getHours();
+				if (this.hours < 13) this.hours = 12-this.hours;
+				else if (this.hours < 14) this.hours = 13-this.hours;
+				else if (this.hours < 18) this.hours = 17-this.hours;
+				else if (this.hours < 19) this.hours = 18-this.hours;
+				else this.hours = 23-this.hours;
+			},
+			timestart:function(){
+				this.seconds = 59 - this.seconds;
+				this.minutes = 59 - this.minutes;
+
+				if (this.hours < 13) this.hours = 12-this.hours;
+				else if (this.hours < 14) this.hours = 13-this.hours;
+				else if (this.hours < 18) this.hours = 17-this.hours;
+				else if (this.hours < 19) this.hours = 18-this.hours;
+				else this.hours = 23-this.hours;
+
+				var h,m,s;
+				s = (this.seconds < 10)?"0"+this.seconds:this.seconds;
+				m = (this.minutes < 10)?"0"+this.minutes:this.minutes;
+				h = (this.hours < 10)?"0"+this.hours:this.hours;
+				if (this.elem) this.elem.innerHTML = h + ":" + m + ":" + s;
+			},
+			mtime:function(){
+			
+				if (--this.seconds < 0){
+					this.seconds = 59;
+					if (--this.minutes < 0){
+						this.minutes = 59;
+						if (--this.hours < 0){
+							this._getHours();
+						}
+					}
+				}
+				var h = this.hours,m = this.minutes ,s = this.seconds;
+				s = (s < 10)?"0"+s:s;
+				m = (m < 10)?"0"+m:m;
+				h = (h < 10)?"0"+h:h;
+				if (this.elem) this.elem.innerHTML = h + ":" + m + ":" + s;
+			},
+			/**
+			 * 
+			 * @param {DOMObject} elem with time text;
+			 * @param {WidgetObject} _this
+			 */
+			start:function(elem,_this){
+				this.elem = elem;
+				this._this = _this;
+				var currentTime = new Date();
+				this.hours = currentTime.getHours();
+				this.minutes = currentTime.getMinutes();
+				this.seconds = currentTime.getSeconds();
+				this.timestart();
+				_this.options._timeTimer = window.setInterval(function() { myTime.mtime(); }, 1000);
+			}
+		},//end object myTime;
+		//---------------------------------------------------------------------------------------------------------------------------
 		///////-----------------
 		vip : { "AlanOfTheBerg":1080788, "1080788":"AlanOfTheBerg",
 				"andrewfatcat":63041, "63041":"andrewfatcat",
@@ -246,8 +317,12 @@
 					"ign_anna":"Anna Tkachuk",
 					"ign_andrew":"Andrew Borovyk",
 					"ign_oleg":"Oleg Polischuk",
-					"ign_tania":"Tania Ishutina"}
+					"ign_tania":"Tania Ishutina",
+					"Kos984":"Kostia Upir", "24606499":"Kostia Upir"}
 		//----------------------
 	});
-	$('body').cartouche();
+	chrome.extension.sendRequest({method: "getSettingsCartouche"}, function(response) {
+		$('body').cartouche(response);
+	});
+	
 })(jQuery);
