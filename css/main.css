@@ -1,2 +1,28 @@
 .kos_vip_ {color:#900 !important;}
 .kos_ign_ {color:#009 !important;}
+
+.kos_time_{position:absolute; background-color: #CCC;
+opacity: 0.8;
+width: 100px;
+height: 18px;
+line-height: 18px;
+text-align: center;
+border-radius: 8px;
+font-size: 12px;
+cursor:hand;
+}
+.kos_areaDiv_{
+	position:absolute; background-color: #C00;
+	opacity: 0.8;
+	width: 200px;
+	height: 18px;
+	line-height: 18px;
+	text-align: center;
+	border-radius: 8px;
+	font-size: 12px;
+	cursor:hand;
+	
+	display:none;
+	color: white;
+	font-weight: bold;
+}

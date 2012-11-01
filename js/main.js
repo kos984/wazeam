@@ -13,26 +13,65 @@
 			timeout: 500,
 			vipCssClass:'kos_vip_',
 			ignCssClass:'kos_ign_',
+			timeCssClass:'kos_time_',
+			areaAlertCssClass:'kos_areaDiv_',
+			timeCssPosition:{'left':'20px','top':'20px'},
+			areaAlertCssPosition:{'left':'20px','top':'20px'},
+			areaDivMessage:undefined, // true as default
+			logTimeAlert:undefined, // remainder to log time object {"time":"17:00","enabled":"true","logged":"date"}
 			_wazeTimer:undefined, // timer update vips
 			_timeTimer:undefined, // timer time
 			num:1
 		},
+		/**
+		 * my vars
+		 */
+		_vars:{
+			DOMTimeObject:undefined,
+			DOMareaAlertObject:undefined
+		},
 		// инициализация widget
 		// вносим изменения в DOM и вешаем обработчики
 		_create: function() {
+			_this = this;
 			
+			// start cheak area menegers
 			(function(_this){
 				_this.options._wazeTimer = window.setInterval(function(){
-					//console.log(_this.options.num++);
 					_this.checkArea(_this);
 				}, _this.options.timeout);
 			})(this);
+			// end cheak area menegers
 			
-			this.element.on("click."+this.eventNamespace, function(){
-				console.log("click");
-				
-				});
-			//$('body').append("<div style='position:absolute; top:10px; left:10px;'>sdsdfsdf</div>");
+			{ // create time elemen
+				this._vars.DOMTimeObject = document.createElement('div');
+				$(this._vars.DOMTimeObject)
+					.addClass(this.options.timeCssClass)
+					.css(this.options.timeCssPosition);
+				this.element.append(this._vars.DOMTimeObject);
+				$(this._vars.DOMTimeObject)
+					.draggable()
+					.on('mouseup'+this.eventNamespace,function(){
+						_this.saveOptions({timeCssPosition:$(this).position()});
+					});
+				this.time.start(this._vars.DOMTimeObject, this);	
+			} // end create time elemen
+			
+			{ // create areaAlertCssPosition elemen
+				this._vars.DOMareaAlertObject = document.createElement('div');
+				$(this._vars.DOMareaAlertObject)
+					.addClass(this.options.areaAlertCssClass)
+					.css(this.options.areaAlertCssPosition)
+					.html('area manager from the list');
+				this.element.append(this._vars.DOMareaAlertObject);
+				$(this._vars.DOMareaAlertObject)
+					.draggable()
+					.on('mouseup'+this.eventNamespace,function(){
+						_this.saveOptions({areaAlertCssPosition:$(this).position()});
+					});
+				//this.time.start(this._vars.DOMTimeObject, this);	
+			} // end create areaAlertCssPosition elemen
+			
 //			this.element;   // искомый объект в jQuery обёртке
 //			this.name;      // имя - expose
 //			this.namespace; // пространство – book
@@ -82,6 +121,14 @@
 					//add span
 					if (_this.vip[test_vip]){
 						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.vip[test_vip]+'" class='+_this.options.vipCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+						if(_this.options.areaDivMessage == 'true'){
+							$(_this._vars.DOMareaAlertObject).show();
+							_this.options.areaDivMessage = false;
+						}
+						if(_this.options.areaAlertMessage == 'true'){
+							alert('area manager from the list!');
+							_this.options.areaAlertMessage = false;
+						}
 					}else if (_this.ign[test_vip]){
 						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.ign[test_vip]+'" class='+_this.options.ignCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
 					}
@@ -92,7 +139,7 @@
 			//clearInterval(options.wazeTimer);
 		},
 		//---------------------------------------------------------------------------------------------------------------------------
-		myTime:{
+		time:{
 			hours:null, minutes:null, seconds:null, elem:null,
 			_getHours:function(){
 				var currentTime = new Date();
@@ -121,6 +168,28 @@
 			},
 			mtime:function(){
 			
+				// reminder
+				//{"time":"1020 => 17:00","enabled":"true","logged":"day"}
+				if (this._this.options.logTimeAlert){
+					var logTimeAlert = this._this.options.logTimeAlert;
+					var now = new Date();
+					if(logTimeAlert.enabled == 'true' && logTimeAlert.logged != now.getDay() && parseInt(logTimeAlert.time) < (now.getHours()*60+now.getMinutes())){
+						if(confirm("log time!")){
+							this._this.saveOptions({
+								'logTimeAlert':{
+									'enabled':'true',
+									'time':logTimeAlert.time,
+									'logged':now.getDay()
+								}
+							});
+							this._this.options.logTimeAlert.logged = now.getDay();
+						}else{
+							this._this.options.logTimeAlert.time = parseInt(logTimeAlert.time) + 5;
+						}
+					}
+				}
+				// end reminder
+				
 				if (--this.seconds < 0){
 					this.seconds = 59;
 					if (--this.minutes < 0){
@@ -149,9 +218,17 @@
 				this.minutes = currentTime.getMinutes();
 				this.seconds = currentTime.getSeconds();
 				this.timestart();
-				_this.options._timeTimer = window.setInterval(function() { myTime.mtime(); }, 1000);
+				(function(_this,time){
+					_this.options._timeTimer = window.setInterval(function() { time.mtime(); }, 1000);
+				})(_this,this);
 			}
 		},//end object myTime;
+		//---------------------------------------------------------------------------------------------------------------------------
+		saveOptions:function(options){
+			chrome.extension.sendRequest({method: "saveOprions",data:options}, function() {
+				//$('body').cartouche(response);
+			});
+		},
 		//---------------------------------------------------------------------------------------------------------------------------
 		///////-----------------
 		vip : { "AlanOfTheBerg":1080788, "1080788":"AlanOfTheBerg",
@@ -321,6 +398,7 @@
 					"Kos984":"Kostia Upir", "24606499":"Kostia Upir"}
 		//----------------------
 	});
+	//$('body').cartouche();
 	chrome.extension.sendRequest({method: "getSettingsCartouche"}, function(response) {
 		$('body').cartouche(response);
 	});
