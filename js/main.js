@@ -188,7 +188,7 @@
 							});
 							this._this.options.logTimeAlert.logged = now.getDay();
 						}else{
-							this._this.options.logTimeAlert.time = parseInt(logTimeAlert.time) + 5;
+							this._this.options.logTimeAlert.time = now.getHours()*60+now.getMinutes() + parseInt(_this.options.timeToRemainderRefresh);
 						}
 					}
 				}

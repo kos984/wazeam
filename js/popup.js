@@ -7,39 +7,34 @@
 		});
 	}*/
 	
+
+	//var db = openDatabase("waze", "1.01", "waze bd with setings and ...",20000);
 	$checkboxes = $('#checkboxes');
-	$timer = $checkboxes.find('input[name=timer]').bind('click.CartugeVipManagers',function(){
-		alert('hello');
-	});
 	
-	var db = openDatabase("waze", "1.01", "waze bd with setings and ...",20000);
-	
-	db.transaction(function(tx) {
-		tx.executeSql("SELECT * FROM settings", [],
-			// table is exists 
-			function (tx,result) { 
-				//alert('dsfsdf')
-				var settings = {};
-				for(var i = 0, n = result.rows.length; i<n;i++){
-					var key = result.rows.item(i)['key'];
-					var val = result.rows.item(i)['value'];
-					if (result.rows.item(i)['type'] == 'json'){
-						try{
-							settings[key] = $.parseJSON(val);	
-						} catch(e){
-							
-						}
-					} else {
-						settings[key] = val;	
-					}
-				}
-				$timer.prop('checked',((settings.showTimer == 'true')?true:false));
-			},
-			// table is not exists, create table and set default settings 
-			function (tx, error) {
-				createSettingsTable(tx, error);
-			}
-		);
+	$.db.getOptions(function(settings){
+		var cheackboxes = [['timer','showTimer']];
+		var getBindfunction = function(key){
+			return function(){
+				var data = {};
+				data[key] = $(this).is(':checked')+'';;
+				$.db.setOptions(data);
+			};
+		};
+		for(var i = 0, n = cheackboxes.length; i<n;i++){
+			$checkboxes.find('input[name='+cheackboxes[i][0]+']') //cheackboxes[i][0] = timer
+				.bind('click.CartugeVipManagers',getBindfunction(cheackboxes[i][1])) //cheackboxes[i][1] = 'showTimer'
+				.prop('checked',((settings[cheackboxes[i][1]] == 'true')?true:false));
+		}
+		/*$timer = $checkboxes.find('input[name=timer]')
+			.bind('click.CartugeVipManagers',getBindfunction('showTimer'))
+			.prop('checked',((settings.showTimer == 'true')?true:false));*/
+		/*$timer = $checkboxes.find('input[name=timer]')
+			.bind('click.CartugeVipManagers',function(){
+				var val = $(this).is(':checked')+'';
+				$.db.setOptions({showTimer:val});
+			})
+			.prop('checked',((settings.showTimer == 'true')?true:false));*/
+		
 	});
 	
 })(jQuery);

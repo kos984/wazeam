@@ -3,108 +3,32 @@
 <head>
 <!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script> -->
 <script type="text/javascript" src="../js/jquery-1.7.js"></script>
+<script type="text/javascript" src="../js/db.jQuery.js"></script>
 <script>
-function toJSON(obj){
-	var json ='';
-	for(var i in obj){
-		if (typeof obj[i] !== 'function')
-			json += (json == '') ? '':','
-			json += '"'+i+'":"'+obj[i]+'"';
-	}
-	return '{'+json+'}';
-}
-
-
-function createSettingsTable(tx, error) {
-	// create table
-	tx.executeSql("CREATE TABLE settings (id REAL UNIQUE, key TEXT UNIQUE, type TEXT, value TEXT)", [], null, null);
-	// appent default settings
-	tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)", 
-		['timeCssPosition','json', '{"left":"20px","top":"20px"}'], null, null);
-	tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)", 
-		['areaAlertCssPosition','json', '{"left":"20px","top":"20px"}'], null, null);
-	tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)", 
-		['logTimeAlert','json','{"time":"1010","enabled":"true","logged":"undefined"}'], null, null);
-		
-	tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)", 
-		['areaDivMessage','text','true'], null, null);
-	tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)", 
-		['areaAlertMessage','text','true'], null, null);
-	tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)", 
-		['showTimer','text','true'], null, null);			
-}
-
-	//CREATE BD AND SET DEFAULT PARAMETRS
-	var db = openDatabase("waze", "1.01", "waze bd with setings and ...",20000);
 	
-	// add to table settings settings :) 
-	db.transaction(function(tx) {
-		
-		// get num of records
-		tx.executeSql("SELECT COUNT(*) FROM settings", [],
-			// table is exists 
-			function (tx,result) {
-				if( result.rows.length != 6) // if no records but table is exist drop table ! 
-					tx.executeSql("DROP TABLE IF EXISTS settings",[],null,null);
-			},
-			// table is not exists, create table and set default settings 
-			createSettingsTable // function
-		);
-	});
-	
+// request listener
+// request = {method:.., data:undefined}
+// case getSettingsCartouche return settings
+// case saveOprions save option in settings table
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 	/*
 	 * request = {method:.., data:undefined}
 	 */
 	if (!request.method) return;
 	
-	var db = openDatabase("waze", "1.01", "waze bd with setings and ...",20000);
-	
 	switch(request.method){
 		
 		// when my object is initiating I send request for get setting
 		// this case return all seting from database 
 		case 'getSettingsCartouche':{
-			db.transaction(function(tx) {
-				tx.executeSql("SELECT * FROM settings", [],
-					// table is exists 
-					function (tx,result) { 
-						//alert('dsfsdf')
-						var settings = {};
-						for(var i = 0, n = result.rows.length; i<n;i++){
-							var key = result.rows.item(i)['key'];
-							var val = result.rows.item(i)['value'];
-							if (result.rows.item(i)['type'] == 'json'){
-								try{
-									settings[key] = $.parseJSON(val);	
-								} catch(e){
-									
-								}
-							} else {
-								settings[key] = val;	
-							}
-						}
-						sendResponse(settings);//{'timeout': 2000});
-					},
-					// table is not exists, create table and set default settings 
-					function (tx, error) {
-						createSettingsTable(tx, error);
-						sendResponse({});
-					}
-				);
+			$.db.getOptions(function(settings){
+				sendResponse(settings);
 			});
 		}
 		// saving options requst <code>_this.saveOptions({timeCssPosition:$(this).position()});</code>
 		case 'saveOprions':{
 			if(!request.data) return;
-			for(var i in request.data){
-				if(typeof request.data[i] !== 'function'){
-					db.transaction(function(tx) {
-						console.log("UPDATE settings SET value = "+ toJSON(request.data[i]) +" WHERE key = "+i);
-						tx.executeSql("UPDATE settings SET value = '"+ toJSON(request.data[i]) +"' WHERE key = '"+i+"'",[],null,createSettingsTable);
-					});
-				}
-			}
+			$.db.setOptions(request.data);
 		}
 	} // end switch;
 
