@@ -58,7 +58,11 @@
 					tx.executeSql("SELECT * FROM settings", [],
 						// table is exists 
 						function (tx,result) { 
-							//alert('dsfsdf')
+							/*if (_this._defaultOptions.length != result.rows.length){
+								_this._createSettingsTable(tx, error);
+								callback(_this._getDefaultOptions());
+								return;
+							}*/
 							var settings = {};
 							for(var i = 0, n = result.rows.length; i<n;i++){
 								var key = result.rows.item(i)['key'];

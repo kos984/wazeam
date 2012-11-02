@@ -28,3 +28,6 @@ display:none;
 	color: white;
 	font-weight: bold;
 }
+.kos_hide{
+	display: none !important;
+}

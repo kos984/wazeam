@@ -19,6 +19,7 @@
 			areaAlertCssPosition:{'left':'20px','top':'20px'},
 			showTimer:undefined,
 			areaDivMessage:undefined, // true as default
+			areaAlertMessage:undefined, // true as default
 			logTimeAlert:undefined, // remainder to log time object {"time":"17:00","enabled":"true","logged":"date"}
 			_wazeTimer:undefined, // timer update vips
 			_timeTimer:undefined, // timer time
@@ -48,7 +49,8 @@
 				this._vars.DOMTimeObject = document.createElement('div');
 				$(this._vars.DOMTimeObject)
 					.addClass(this.options.timeCssClass)
-					.css(this.options.timeCssPosition);
+					.css(this.options.timeCssPosition)
+					.attr('id','showTimer');
 				if(this.options.showTimer == 'true'){
 					$(this._vars.DOMTimeObject).show();
 				}
@@ -66,6 +68,7 @@
 				$(this._vars.DOMareaAlertObject)
 					.addClass(this.options.areaAlertCssClass)
 					.css(this.options.areaAlertCssPosition)
+					.attr('id','areaDivMessage')
 					.html('area manager from the list');
 				this.element.append(this._vars.DOMareaAlertObject);
 				$(this._vars.DOMareaAlertObject)
