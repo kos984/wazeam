@@ -29,7 +29,9 @@ function createSettingsTable(tx, error) {
 	tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)", 
 		['areaDivMessage','text','true'], null, null);
 	tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)", 
-		['areaAlertMessage','text','true'], null, null);		
+		['areaAlertMessage','text','true'], null, null);
+	tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)", 
+		['showTimer','text','true'], null, null);			
 }
 
 	//CREATE BD AND SET DEFAULT PARAMETRS

@@ -17,6 +17,7 @@
 			areaAlertCssClass:'kos_areaDiv_',
 			timeCssPosition:{'left':'20px','top':'20px'},
 			areaAlertCssPosition:{'left':'20px','top':'20px'},
+			showTimer:undefined,
 			areaDivMessage:undefined, // true as default
 			logTimeAlert:undefined, // remainder to log time object {"time":"17:00","enabled":"true","logged":"date"}
 			_wazeTimer:undefined, // timer update vips
@@ -48,6 +49,9 @@
 				$(this._vars.DOMTimeObject)
 					.addClass(this.options.timeCssClass)
 					.css(this.options.timeCssPosition);
+				if(this.options.showTimer == 'true'){
+					$(this._vars.DOMTimeObject).show();
+				}
 				this.element.append(this._vars.DOMTimeObject);
 				$(this._vars.DOMTimeObject)
 					.draggable()

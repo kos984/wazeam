@@ -1,0 +1,9 @@
+body {background-color: black; color:white; font-size:14px; }
+a, a:link, a:visited{
+	display:block;
+	font-weight:bold;
+	color:white;
+	text-decoration:none;
+}
+a:hover{color:yellow;}
+#title {font-size:1.1em; display:block;font-weight:bold;}
