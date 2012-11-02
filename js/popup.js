@@ -17,7 +17,7 @@
 		                   ['timer','showTimer'],
 		                   ['area','areaDivMessage'],
 		                   ['alert','areaAlertMessage'],
-		                   ['logTime','logTimeAlert']  //TODO
+		                   ['logTime','logTimeAlert']
 		                   ];
 		var getBindfunction = function(key){
 			return function(){
@@ -26,7 +26,8 @@
 				$.db.setOptions(data);
 				
 				chrome.tabs.executeScript(
-						null, {code:"var el = document.getElementById('"+key+"'); if(!el)return; el.style.display = (el.style.display=='block')?'none':'block'"});
+						//null, {code:"var el = document.getElementById('"+key+"'); if(!el)return; console.log("+data[key]+",('"+data[key]+"'!='true')); el.style.display = ('"+data[key]+"'!='true')?'none':'block'"});
+						null, {code:"console.log("+data[key]+",('"+data[key]+"'!='true')); if('"+data[key]+"'!='true'){$('#"+key+"').addClass('kos_hide');}else{$('#"+key+"').removeClass('kos_hide');}"});
 				
 			};
 		};

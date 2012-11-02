@@ -14,6 +14,7 @@
 			vipCssClass:'kos_vip_',
 			ignCssClass:'kos_ign_',
 			timeCssClass:'kos_time_',
+			hideCssClass:'kos_hide',
 			areaAlertCssClass:'kos_areaDiv_',
 			timeCssPosition:{'left':'20px','top':'20px'},
 			areaAlertCssPosition:{'left':'20px','top':'20px'},
@@ -51,8 +52,8 @@
 					.addClass(this.options.timeCssClass)
 					.css(this.options.timeCssPosition)
 					.attr('id','showTimer');
-				if(this.options.showTimer == 'true'){
-					$(this._vars.DOMTimeObject).show();
+				if(this.options.showTimer != 'true'){
+					$(this._vars.DOMTimeObject).addClass(this.options.hideCssClass);
 				}
 				this.element.append(this._vars.DOMTimeObject);
 				$(this._vars.DOMTimeObject)
@@ -70,6 +71,9 @@
 					.css(this.options.areaAlertCssPosition)
 					.attr('id','areaDivMessage')
 					.html('area manager from the list');
+				if(this.options.areaDivMessage != 'true'){
+					$(this._vars.DOMareaAlertObject).addClass(this.options.hideCssClass);
+				}
 				this.element.append(this._vars.DOMareaAlertObject);
 				$(this._vars.DOMareaAlertObject)
 					.draggable()
