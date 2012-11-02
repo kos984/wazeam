@@ -1,7 +1,9 @@
 .kos_vip_ {color:#900 !important;}
 .kos_ign_ {color:#009 !important;}
 
-.kos_time_{position:absolute; background-color: #CCC;
+.kos_time_{
+position:absolute !important;
+background-color: #CCC;
 opacity: 0.8;
 width: 100px;
 height: 18px;
@@ -29,4 +31,57 @@ cursor:hand;
 }
 .kos_hide{
 	display: none !important;
+}
+.kos_alertAreaAlert{
+	display: none;
+}
+.kos_alertAreaAlert div:FIRST-CHILD{
+	position:fixed;
+	opacity: 0.8;
+	left: 0px;
+	top:0px;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	
+}
+.kos_alertAreaAlert div + div{
+	position: fixed;
+	left: 50%;
+	top:50%;
+	width: 350px;
+	height: 120px;
+	text-align:center;
+	margin-left: -175px;
+	margin-top: -60px;
+	background-color: grey;
+	border-radius: 15px;
+	overflow: hidden;
+	line-height: 85px;
+	vertical-align: middle;
+	color: white;
+	font-weight: bold;
+}
+.kos_alertAreaAlert div.head{
+	position: relative;
+	width:100%;
+	height: 20px;
+	background-color: black;
+	border-radius: 15px 15px 0px 0px;
+	line-height: 20px;
+	color: red;
+	font-size: 13px;
+	text-align: left;
+	text-indent: 25px;
+}
+.kos_alertAreaAlert input[value=ok]{
+position: absolute;
+top: 85px;
+left: 255px;
+height: 20px;
+line-height: 10px;
+width: 70px;
+font-size: 12px;
+border-radius: 9px;
+border-color: #777;
 }

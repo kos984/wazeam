@@ -9,27 +9,34 @@
 <link rel="stylesheet" type="text/css"  href="../css/popup.css" />
 </head>
 <body>
+<div id="body">
+
 <div id="usersLinks">
 	<a href="https://docs.google.com/spreadsheet/viewform?formkey=dDFhcGpGNGdWWmRiTXMxa2tOS2RlYWc6MQ&amp;ifq">Aerial</a>
 	<a href="https://docs.google.com/spreadsheet/viewform?pli=1&amp;formkey=dDBlRk04X0hqdVFPZkU3VmZkNHFucVE6MQ#gid=0">Problematic</a>
 	<a href="https://docs.google.com/spreadsheet/viewform?formkey=dDRBT21CQ25QODdjMEg5SWtaU29SNUE6MQ">IGN bugs</a>
 	<hr>
+</div>
+<div id="maps" style="display:none;">
 	<a href="http://www.waze.com/cartouche_old/?zoom=5&amp;lat=19.02162&amp;lon=-98.82437&amp;layers=BFTFTTTTTTFTTTTFTTTTFT">old</a>
 	<a href="http://www.waze.com/editor/?zoom=5&amp;lat=19.02162&amp;lon=-98.82437&amp;layers=BFTFTTTTTTFTTTTFTTTTFT">new</a>
 	<a href="http://descartes.waze.com/beta/?zoom=5&amp;lat=19.02162&amp;lon=-98.82437&amp;layers=BFTFTTTTTTFTTTTFTTTTFT">beta</a>
 	<a href="http://descartes.waze.com/venues/?zoom=5&amp;lat=19.02162&amp;lon=-98.82437&amp;layers=BFTFTTTTTTFTTTTFTTTTFT">venues</a>
 	<hr>
-	<a href="http://maps.google.com/maps?q=19.02162+-98.82437">google maps</a>
-	<a href="http://www.bing.com/maps/?v=2&amp;cp=19.02162~-98.82437&amp;lvl=18&amp;dir=0&amp;sty=o&amp;where1=19.02162%2C%20-98.82437&amp;form=LMLTCC">bing maps</a>
+	<a id="google_maps" href="#">google maps</a>
+	<a id="bing_maps" href="#">bing maps</a>	
 </div>
 <div id="form">
 	<form id="checkboxes">
 		<label><input type="checkbox" name="timer">timer</label><br>
-		<input type="checkbox" name="area"><span>area</span><br>
-		<input type="checkbox" name="alert"><span>alert</span><br>
-		<input type="checkbox" name="logTime"><span>logTime</span><br>
+		<label><input type="checkbox" name="area"><span>area</span></label><br>
+		<label><input type="checkbox" name="alert"><span>alert</span></label><br>
+		<label><input type="checkbox" name="logTime"><span>logTime</span></label><br>
 	</form>
-</div>	
-</body>
+</div>		
+	
+</div> <!-- body -->
+		
 <script type="text/javascript" src="../js/popup.js"></script>
+</body>
 </html>

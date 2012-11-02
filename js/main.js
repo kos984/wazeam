@@ -1,3 +1,6 @@
+//TODO: надо зделать confirm тоже на html
+//TODO: на следующию версию добавть возможность менять сочетания клавиш
+
 //test pages:
 //https://descartesw.waze.com/beta/?zoom=7&lat=25.66934&lon=-100.38657&marker=true&layers=BFTFTTTFTTFTTTTFTTTTFT&segments=176820080  
 //https://world.waze.com/editor/?zoom=5&lat=19.02162&lon=-98.82437&layers=BFTFTTTFTTFTTTTFTTTTFT&segments=162329876
@@ -16,6 +19,7 @@
 			timeCssClass:'kos_time_',
 			hideCssClass:'kos_hide',
 			areaAlertCssClass:'kos_areaDiv_',
+			alertAreaAlertCssClass:'kos_alertAreaAlert', // стили для замены стандартного алерта
 			timeCssPosition:{'left':'20px','top':'20px'},
 			areaAlertCssPosition:{'left':'20px','top':'20px'},
 			showTimer:undefined,
@@ -31,12 +35,47 @@
 		 */
 		_vars:{
 			DOMTimeObject:undefined,
-			DOMareaAlertObject:undefined
+			DOMareaAlertObject:undefined,
+			DOMAlertAreaAlertObject:undefined,
+			winKey:false
 		},
 		// инициализация widget
 		// вносим изменения в DOM и вешаем обработчики
 		_create: function() {
 			_this = this;
+//this.links.bingMaps = 'http://www.bing.com/maps/?v=2&cp='+lat+'~'+lon+'&lvl=18&dir=0&sty=o&where1='+lat+'%2C%20'+lon+'&form=LMLTCC'
+//http://maps.google.com/maps?q=19.02162+-98.82437 //lat lon
+			//key ...
+			//91 - win
+				this.element.bind('keydown'+this.eventNamespace,function(event){
+					if(event.keyCode == 91)
+						_this._vars.winKey = true;
+				});
+				this.element.bind('keyup'+this.eventNamespace,function(event){
+					if(event.keyCode == 91)
+						_this._vars.winKey = false;
+					if (_this._vars.winKey == true){
+						try{
+							var tmp = window.location.search;
+							var lat = /(?:lat=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
+							var lon = /(?:lon=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
+							switch(event.keyCode){
+								case 71: { //G
+									window.open('http://maps.google.com/maps?q='+lat+'+'+lon);
+									break;
+								}
+								case 66: { //B
+									window.open('http://www.bing.com/maps/?v=2&cp='+lat+'~'+lon+'&lvl=18&dir=0&sty=o&where1='+lat+'%2C%20'+lon+'&form=LMLTCC');
+									break;
+								} 
+							}
+						} catch(e){
+							console.log(e);
+						}
+						_this._vars.winKey = false;
+					} // if 
+				});			
+			//end key
 			
 			// start cheak area menegers
 			(function(_this){
@@ -59,7 +98,10 @@
 				$(this._vars.DOMTimeObject)
 					.draggable()
 					.on('mouseup'+this.eventNamespace,function(){
-						_this.saveOptions({timeCssPosition:$(this).position()});
+						var position = $(this).position();
+						position.top+='px';
+						position.left+='px';
+						_this.saveOptions({timeCssPosition:position});
 					});
 				this.time.start(this._vars.DOMTimeObject, this);	
 			} // end create time elemen
@@ -78,8 +120,32 @@
 				$(this._vars.DOMareaAlertObject)
 					.draggable()
 					.on('mouseup'+this.eventNamespace,function(){
-						_this.saveOptions({areaAlertCssPosition:$(this).position()});
+						var position = $(this).position();
+						position.top+='px';
+						position.left+='px';
+						_this.saveOptions({areaAlertCssPosition:position});
 					});
+				//this.time.start(this._vars.DOMTimeObject, this);	
+			} // end create areaAlertCssPosition elemen
+			
+			{ // create alertAreaManager replase alert function
+				this._vars.DOMAlertAreaAlertObject = document.createElement('div');
+				$(this._vars.DOMAlertAreaAlertObject)
+					.addClass(this.options.alertAreaAlertCssClass)
+					.attr('id','areaAlertMessage')
+					.html('<div></div><div><div class="head">Area manager from the list!</div>Area manager from the list!<input type="button" value="ok"/></div>');
+				if(this.options.areaAlertMessage != 'true'){
+					$(this._vars.DOMAlertAreaAlertObject).addClass(this.options.hideCssClass);
+				}
+				this.element.append(this._vars.DOMAlertAreaAlertObject);
+				$('.kos_alertAreaAlert input[value=ok]').bind('click'+this.eventNamespace,function(){
+					$('#areaAlertMessage').hide();
+				});
+				/*$(this._vars.DOMAlertAreaAlertObject)
+					.draggable()
+					.on('mouseup'+this.eventNamespace,function(){
+						_this.saveOptions({areaAlertCssPosition:$(this).position()});
+					});*/
 				//this.time.start(this._vars.DOMTimeObject, this);	
 			} // end create areaAlertCssPosition elemen
 			
@@ -132,14 +198,15 @@
 					//add span
 					if (_this.vip[test_vip]){
 						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.vip[test_vip]+'" class='+_this.options.vipCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
-						if(_this.options.areaDivMessage == 'true'){
+						//if(_this.options.areaDivMessage == 'true'){
 							$(_this._vars.DOMareaAlertObject).show();
 							_this.options.areaDivMessage = false;
-						}
-						if(_this.options.areaAlertMessage == 'true'){
-							alert('area manager from the list!');
+						//}
+						//if(_this.options.areaAlertMessage == 'true'){
+							//alert('area manager from the list!');
+							$(_this._vars.DOMAlertAreaAlertObject).show();
 							_this.options.areaAlertMessage = false;
-						}
+						//}
 					}else if (_this.ign[test_vip]){
 						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.ign[test_vip]+'" class='+_this.options.ignCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
 					}

@@ -1,14 +1,6 @@
 
 (function($){
 	
-	/*function saveOptions(options){
-		chrome.extension.sendRequest({method: "saveOprions",data:options}, function() {
-			//$('body').cartouche(response);
-		});
-	}*/
-	
-
-	//var db = openDatabase("waze", "1.01", "waze bd with setings and ...",20000);
 	$checkboxes = $('#checkboxes');
 	
 	$.db.getOptions(function(settings){
@@ -37,17 +29,49 @@
 				.prop('checked',((settings[cheackboxes[i][1]] == 'true')?true:false));
 		}
 		
-		
-		/*$timer = $checkboxes.find('input[name=timer]')
-			.bind('click.CartugeVipManagers',getBindfunction('showTimer'))
-			.prop('checked',((settings.showTimer == 'true')?true:false));*/
-		/*$timer = $checkboxes.find('input[name=timer]')
-			.bind('click.CartugeVipManagers',function(){
-				var val = $(this).is(':checked')+'';
-				$.db.setOptions({showTimer:val});
-			})
-			.prop('checked',((settings.showTimer == 'true')?true:false));*/
+//indus code :)
+			chrome.tabs.getSelected(null, function(tab){
+				try{
+					var tmp = tab.url;
+					var lat = /(?:lat=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
+					var lon = /(?:lon=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
+					$('#google_maps').attr('href','http://maps.google.com/maps?q='+lat+'+'+lon);
+					$('#bing_maps').attr('href','http://www.bing.com/maps/?v=2&cp='+lat+'~'+lon+'&lvl=18&dir=0&sty=o&where1='+lat+'%2C%20'+lon+'&form=LMLTCC');
+					$('#maps').show();
+				}catch(e){
+					$('#maps').hide();
+				}
+			});
+		$('#google_maps').click(function(){
+			try{
+				chrome.tabs.getSelected(null, function(tab){ 
+					var tmp = tab.url;
+					var lat = /(?:lat=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
+					var lon = /(?:lon=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
+					chrome.tabs.create({url:'http://maps.google.com/maps?q='+lat+'+'+lon,
+						index:tab.index+1});
+				});
+			} catch(e){
+				console.log(e);
+			}
+			return false;
+		});
+		$('#bing_maps').click(function(){
+			try{
+				chrome.tabs.getSelected(null, function(tab){ 
+					var tmp = tab.url;
+					var lat = /(?:lat=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
+					var lon = /(?:lon=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
+					chrome.tabs.create({url:'http://www.bing.com/maps/?v=2&cp='+lat+'~'+lon+'&lvl=18&dir=0&sty=o&where1='+lat+'%2C%20'+lon+'&form=LMLTCC',
+						index:tab.index+1});
+				});
+			} catch(e){
+				console.log(e);
+			}
+			return false;
+		});
+// end indus code
 		
 	});
-	
+	//$('#body').slideDown('slow');
 })(jQuery);
