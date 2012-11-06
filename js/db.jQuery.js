@@ -14,7 +14,7 @@
 	 */
 	$.db = {
 			// настройки по умолчанию
-			_defaultOptions:[
+			_defaultOptions:[ // table settings
 							 	['timeCssPosition','json', '{"left":"20px","top":"20px"}'],
 							 	['areaAlertCssPosition','json', '{"left":"20px","top":"20px"}'],
 							 	['logTimeAlert','json','{"time":"1010","enabled":"true","logged":"undefined"}'],
@@ -23,6 +23,17 @@
 							 	['showTimer','text','true'],
 							 	['timeToRemainderRefresh','text','5']
 							 ],
+			_defaultStaticLink:[ // table static_links
+			                    ['Aerial','https://docs.google.com/spreadsheet/viewform?formkey=dDFhcGpGNGdWWmRiTXMxa2tOS2RlYWc6MQ&amp;ifq'],
+			                    ['Problematic','https://docs.google.com/spreadsheet/viewform?pli=1&amp;formkey=dDBlRk04X0hqdVFPZkU3VmZkNHFucVE6MQ#gid=0'],
+			                    ['IGN bugs','https://docs.google.com/spreadsheet/viewform?formkey=dDRBT21CQ25QODdjMEg5SWtaU29SNUE6MQ']
+		                    ],
+		    _defaultCartouches:[
+		                        ['old','http://www.waze.com/cartouche_old/'],
+		                        ['new','http://www.waze.com/editor/'],
+		                        ['beta','http://descartes.waze.com/beta/'],
+		                        ['venues','http://descartes.waze.com/venues/']
+		                        ],
 			// возвращает настройки по умолчанию в виде обйекта
 			_getDefaultOptions:function(){
 				var options = {};
@@ -46,7 +57,7 @@
 				return '{'+json+'}';
 			},
 			// db object
-			db:openDatabase("waze", "1.01", "waze bd with setings and ...",20000),
+			db:openDatabase("waze", "1.01", "waze bd with setings and ...",30000),
 			/**
 			 * 
 			 * @param {Function} callback
@@ -84,6 +95,78 @@
 						function (tx, error) {
 							_this._createSettingsTable(tx, error);
 							callback(_this._getDefaultOptions());
+						}
+					);
+				});
+			},
+			/**
+			 * 
+			 */
+			getStaticLinks:function(callback){
+				if (typeof callback !== 'function') return;
+				var _this = this;
+				this.db.transaction(function(tx) {
+					tx.executeSql("SELECT * FROM static_links", [],
+						// table is exists 
+						function (tx,result) { 
+							/*if (_this._defaultOptions.length != result.rows.length){
+								_this._createSettingsTable(tx, error);
+								callback(_this._getDefaultOptions());
+								return;
+							}*/
+							var settings = {};
+							for(var i = 0, n = result.rows.length; i<n;i++){
+								var key = result.rows.item(i)['key'];
+								var val = result.rows.item(i)['link'];
+								settings[key] = val;
+							}
+							callback(settings);
+						},
+						// table is not exists, create table and set default settings 
+						function (tx, error) {
+							_this._createStaticLinksTable(tx, error);
+							
+							var def = {};
+							for (var i =0, n = _this._defaultStaticLink.length; i<n; i++){
+								def[_this._defaultStaticLink[i][0]] = _this._defaultStaticLink[i][1];
+							}
+							callback(def);
+						}
+					);
+				});
+			},
+			/**
+			 * 
+			 */
+			getCartouches:function(callback){
+				
+				if (typeof callback !== 'function') return;
+				var _this = this;
+				
+				this.db.transaction(function(tx) {
+					tx.executeSql("SELECT * FROM cartouches", [],
+						// table is exists 
+						function (tx,result) { 
+						//callback('11');
+							var settings = {};
+							for(var i = 0, n = result.rows.length; i<n;i++){
+								var key = result.rows.item(i)['key'];
+								var val = result.rows.item(i)['link'];
+								settings[key] = val;
+							}
+							callback(settings);
+						},
+						// table is not exists, create table and set default settings 
+						function (tx, error) {
+							//callback('22');
+							
+							_this._createCartouchesTable(tx, error);
+							
+							var def = {};
+							for (var i =0, n = _this._defaultCartouches.length; i<n; i++){
+								def[_this._defaultCartouches[i][0]] = _this._defaultCartouches[i][1];
+							}
+							callback(def);
 						}
 					);
 				});
@@ -146,6 +229,34 @@
 					tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)",
 							this._defaultOptions[i],null,null);
 				}
+			},
+			_createStaticLinksTable:function(tx,error){
+				//drop table before add new data
+				tx.executeSql("DROP TABLE IF EXISTS static_links",[],null,null);
+				// create table
+				tx.executeSql("CREATE TABLE static_links (id REAL UNIQUE, key TEXT UNIQUE, link TEXT)", [], null, null);
+				// appent default settings
+				for(var i =0, n = this._defaultStaticLink.length; i<n;i++){
+					tx.executeSql("INSERT INTO static_links (key, link) values(?, ?)",
+							this._defaultStaticLink[i],null,null);
+				}
+			},
+			_createCartouchesTable:function(tx,error){
+				//drop table before add new data
+				tx.executeSql("DROP TABLE IF EXISTS cartouches",[],null,null);
+				// create table
+				tx.executeSql("CREATE TABLE cartouches (id REAL UNIQUE, key TEXT UNIQUE, link TEXT)", [], null, null);
+				// appent default settings
+				for(var i =0, n = this._defaultCartouches.length; i<n;i++){
+					tx.executeSql("INSERT INTO cartouches (key, link) values(?, ?)",
+							this._defaultCartouches[i],null,null);
+				}
 			}
 	};
 })(jQuery);
+
+
+//var db = openDatabase("waze", "1.01", "waze bd with setings and ...",20000);
+//db.transaction(function(tx){
+//tx.executeSql("DROP TABLE IF EXISTS cartouches",[],null,null);
+//})

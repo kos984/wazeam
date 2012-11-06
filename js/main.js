@@ -1,15 +1,26 @@
 //TODO: надо зделать confirm тоже на html
 //TODO: на следующию версию добавть возможность менять сочетания клавиш
 
+/*
+ * tasks
+ *  добавить страницу настроек
+ *  добавить подсветку ign_...
+ *  добавить подсветку того кто редактирует
+ *  вынести настройки css в веб морду
+ *  logtime не работает !!!!
+ */
+
 //test pages:
 //https://descartesw.waze.com/beta/?zoom=7&lat=25.66934&lon=-100.38657&marker=true&layers=BFTFTTTFTTFTTTTFTTTTFT&segments=176820080  
 //https://world.waze.com/editor/?zoom=5&lat=19.02162&lon=-98.82437&layers=BFTFTTTFTTFTTTTFTTTTFT&segments=162329876
+
+//https://www.waze.com/editor/?zoom=5&lat=43.19994&lon=-96.29132&layers=BFTFFTTTFTTFTTFTFTTTTFT&segments=65384140
 
 //alert('sdfsdf');
 
 (function($){
 	//here my widget
-	console.log($.widget);
+	//console.log($.widget);
 	$.widget("kos.cartouche", {
 		// настройки по умолчанию
 		options: { 
@@ -18,6 +29,7 @@
 			ignCssClass:'kos_ign_',
 			timeCssClass:'kos_time_',
 			hideCssClass:'kos_hide',
+			ignOwnCssClass:'kos_ign_own_',
 			areaAlertCssClass:'kos_areaDiv_',
 			alertAreaAlertCssClass:'kos_alertAreaAlert', // стили для замены стандартного алерта
 			timeCssPosition:{'left':'20px','top':'20px'},
@@ -37,7 +49,8 @@
 			DOMTimeObject:undefined,
 			DOMareaAlertObject:undefined,
 			DOMAlertAreaAlertObject:undefined,
-			winKey:false
+			winKey:false,
+			own_name:false //имя пользователя который работает
 		},
 		// инициализация widget
 		// вносим изменения в DOM и вешаем обработчики
@@ -149,6 +162,14 @@
 				//this.time.start(this._vars.DOMTimeObject, this);	
 			} // end create areaAlertCssPosition elemen
 			
+			// own roads
+			try{
+				this._vars.own_name = $('#login-navigation span').html().match(/\w+$/)[0];
+			}catch(e){}
+			
+			//
+			
+			
 //			this.element;   // искомый объект в jQuery обёртке
 //			this.name;      // имя - expose
 //			this.namespace; // пространство – book
@@ -190,7 +211,9 @@
 					if (arr[j][SPANTEG]) // if we get span
 					{
 						//test class name and if class is exist continue ...
-						if(arr[j][SPANTEG].indexOf(options.vipCssClass) > 0 || arr[j][SPANTEG].indexOf(options.ingCssClass) > 0){
+						if(arr[j][SPANTEG].indexOf(options.vipCssClass) > 0 || 
+								arr[j][SPANTEG].indexOf(options.ingCssClass) > 0 || 
+								arr[j][SPANTEG].indexOf(options.ignOwnCssClass) > 0){
 							continue;
 						}
 					}
@@ -198,16 +221,18 @@
 					//add span
 					if (_this.vip[test_vip]){
 						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.vip[test_vip]+'" class='+_this.options.vipCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
-						//if(_this.options.areaDivMessage == 'true'){
+						if(_this.options.areaDivMessage == 'true'){
 							$(_this._vars.DOMareaAlertObject).show();
 							_this.options.areaDivMessage = false;
-						//}
-						//if(_this.options.areaAlertMessage == 'true'){
+						}
+						if(_this.options.areaAlertMessage == 'true'){
 							//alert('area manager from the list!');
 							$(_this._vars.DOMAlertAreaAlertObject).show();
 							_this.options.areaAlertMessage = false;
-						//}
-					}else if (_this.ign[test_vip]){
+						}
+					}else if(_this._vars.own_name == test_vip){
+						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span class='+_this.options.ignOwnCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+					}else if (_this.ign[test_vip] || test_vip.indexOf('ign_') == 0){
 						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.ign[test_vip]+'" class='+_this.options.ignCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
 					}
 				} //end for j 

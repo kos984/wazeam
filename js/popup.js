@@ -37,41 +37,72 @@
 					var lon = /(?:lon=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
 					$('#google_maps').attr('href','http://maps.google.com/maps?q='+lat+'+'+lon);
 					$('#bing_maps').attr('href','http://www.bing.com/maps/?v=2&cp='+lat+'~'+lon+'&lvl=18&dir=0&sty=o&where1='+lat+'%2C%20'+lon+'&form=LMLTCC');
+						//.attr('tab',tab.index+1);
 					$('#maps').show();
 				}catch(e){
 					$('#maps').hide();
 				}
 			});
-		$('#google_maps').click(function(){
-			try{
-				chrome.tabs.getSelected(null, function(tab){ 
-					var tmp = tab.url;
-					var lat = /(?:lat=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
-					var lon = /(?:lon=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
-					chrome.tabs.create({url:'http://maps.google.com/maps?q='+lat+'+'+lon,
-						index:tab.index+1});
-				});
-			} catch(e){
-				console.log(e);
-			}
-			return false;
-		});
-		$('#bing_maps').click(function(){
-			try{
-				chrome.tabs.getSelected(null, function(tab){ 
-					var tmp = tab.url;
-					var lat = /(?:lat=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
-					var lon = /(?:lon=)(-?\d+(?:\.\d+)?)/.exec(tmp)[1];
-					chrome.tabs.create({url:'http://www.bing.com/maps/?v=2&cp='+lat+'~'+lon+'&lvl=18&dir=0&sty=o&where1='+lat+'%2C%20'+lon+'&form=LMLTCC',
-						index:tab.index+1});
-				});
-			} catch(e){
-				console.log(e);
-			}
-			return false;
-		});
+
 // end indus code
 		
 	});
+	
+	$.db.getStaticLinks(function(links){
+		var str = '';
+		for(var key in links){
+			var link = links[key];
+			if ( typeof link !== 'string' ){
+				continue;
+			}
+			str += "<a href='"+link+"'>"+key+"</a>";
+		}
+		$('#usersLinks')
+			.html(str+'<hr>')
+			.show()
+			.find('a');
+	});
+	
+	//--------------------------------------------------------------------------------------
+	
+	chrome.tabs.getSelected(null, function(tab){
+		//alert('1');
+		try{
+			var tmp = tab.url.match(/\?.*$/)[0];
+			
+			$.db.getCartouches(function(links){
+				//alert('2');					
+				var str = '';
+				for(var key in links){
+					var link = links[key];
+					if ( typeof link !== 'string' ){
+						continue;
+					}
+					str += "<a href='"+link+tmp+"'>"+key+"</a>";
+				}
+				$('#cartouches')
+					.html(str+'<hr>')
+					.show();
+			});
+			$('#cartouches').show();
+		}catch(e){
+			//alert(e);
+			$('#cartouches').hide();
+		}
+	});
+	//----------------------------------------------------------------------------------------
+	
+	$('#body').click(function(event){
+		if(event.srcElement.nodeName !== 'A')
+			return;
+		var _this = $(event.srcElement);
+		chrome.tabs.getSelected(null, function(tab){
+			chrome.tabs.create({url:$(_this).attr('href'),
+				index:tab.index+1});
+		});
+		
+		return false;
+	});
+	
 	//$('#body').slideDown('slow');
 })(jQuery);
