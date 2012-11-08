@@ -1,3 +1,5 @@
+//TODO: need make refactoring !!!
+
 (function($){
 	/**
 	 * user api

@@ -1,0 +1,70 @@
+body {
+	background-color: #EEE;
+}
+form {
+	margin-top:20px; 
+	display: block;
+	background-color: #CCC;
+	min-width: 100px;
+	min-height: 20px;
+	position: relative;
+	border-style: ridge;
+	border-width: 3px;
+	position: relative;
+}
+
+form ul{
+	list-style: none;
+	padding: 0px;
+}
+
+form input[type=text]{ width: 150px; }
+form input[type=url]{ width: 500px; }
+form ul li:nth-child(even){ background-color: #aaa; }
+form ul li:nth-child(odd){ background-color: #bbb; }
+form ul li:HOVER{ background-color: #999; }
+
+form ul li:nth-child(even) input{ background-color: #bbb; }
+form ul li:nth-child(odd) input{ background-color: #ccc; }
+form ul li:HOVER input{ background-color: #aaa; }
+form ul li input:FOCUS{ background-color: #eee; }
+
+form ul li label{
+	display: inline-block;
+	margin-left: 25px;
+}
+
+form div.title{
+	position: absolute;
+	background-color: #EEE;
+	height: 20px;
+	font-size: 14px;
+	line-height: 20px;
+	vertical-align: middle;
+	right: 20px;
+	top: -13px;
+	padding: 0px 5px;
+	border-style: inherit;
+	border-width: inherit;
+}
+
+form input[type=submit]{
+	position: relative;
+	left:25px;
+}
+
+form input{
+border-radius: 10px;
+}
+form input[type='text'], form input[type='url']{
+	text-indent: 10px;
+}
+
+input[name=add]{
+background-color: #0A0;
+border-color: #0A0;
+}
+
+input[name=default]{
+background-color: #E00;
+border-color: #E00;}
