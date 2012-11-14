@@ -1,11 +1,8 @@
 //TODO: надо зделать confirm тоже на html
 //TODO: на следующию версию добавть возможность менять сочетания клавиш
-
 /*
  * tasks
  *  добавить страницу настроек
- *  добавить подсветку ign_...
- *  добавить подсветку того кто редактирует
  *  вынести настройки css в веб морду
  *  logtime не работает !!!!
  */
@@ -49,6 +46,7 @@
 			DOMTimeObject:undefined,
 			DOMareaAlertObject:undefined,
 			DOMAlertAreaAlertObject:undefined,
+			DOMConfirmLogTimeObject:undefined, // comfirm reminder div object
 			winKey:false,
 			own_name:false //имя пользователя который работает
 		},
@@ -151,16 +149,40 @@
 					$(this._vars.DOMAlertAreaAlertObject).addClass(this.options.hideCssClass);
 				}
 				this.element.append(this._vars.DOMAlertAreaAlertObject);
-				$('.kos_alertAreaAlert input[value=ok]').bind('click'+this.eventNamespace,function(){
+				$('#areaAlertMessage input[value=ok]').bind('click'+this.eventNamespace,function(){
 					$('#areaAlertMessage').hide();
 				});
-				/*$(this._vars.DOMAlertAreaAlertObject)
-					.draggable()
-					.on('mouseup'+this.eventNamespace,function(){
-						_this.saveOptions({areaAlertCssPosition:$(this).position()});
-					});*/
-				//this.time.start(this._vars.DOMTimeObject, this);	
 			} // end create areaAlertCssPosition elemen
+			
+			{ // DOMConfirmLogTimeObject - comfirm reminder div object
+//				var confirmLogTimeObject = {
+//					cansel:	document.createElement('input').attr({'type':'button','value':'cansel'}).addClass('confirmCansel'),
+//					ok:	document.createElement('input').attr({'type':'button','value':'ok'}).addClass('confirmOk')
+//				};
+				var _this = this;
+				this._vars.DOMConfirmLogTimeObject = document.createElement('div');
+				$(this._vars.DOMConfirmLogTimeObject)
+				.addClass(this.options.alertAreaAlertCssClass)
+				.attr('id','logTimeConfirm')
+				.html('<div></div><div><div class="head">Area manager from the list!</div>Please log time!<input type="button" value="cansel"><input type="button" value="ok"/></div>');
+				if(this.options.logTimeConfirm != 'true'){
+					$(this._vars.DOMConfirmLogTimeObject).addClass(this.options.hideCssClass);
+				}
+				this.element.append(this._vars.DOMConfirmLogTimeObject);
+				$('#logTimeConfirm input[value=ok]').bind('click'+this.eventNamespace,function(){
+					$('#logTimeConfirm').hide();
+					
+					var now = new Date();
+					_this.saveOptions({'logTimeConfirm_logged':now.getDay()});
+					$(this._vars.DOMConfirmLogTimeObject).addClass(this.options.hideCssClass);
+				});
+				$('#logTimeConfirm input[value=cansel]').bind('click'+this.eventNamespace,function(){
+					$('#logTimeConfirm').hide();
+					var now = new Date();
+					_this.options.logTimeConfirm_time = now.getHours()*60+now.getMinutes() + parseInt(_this.options.timeToRemainderRefresh);
+				});
+
+			}
 			
 			// own roads
 			try{
@@ -234,9 +256,9 @@
 						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span class='+_this.options.ignOwnCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
 					}else if (_this.ign[test_vip] || test_vip.indexOf('ign_') == 0){
 						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.ign[test_vip]+'" class='+_this.options.ignCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
-					}
-				} //end for j 
-			} // end for i
+					};
+				}; //end for j 
+			}; // end for i
 	
 			//console.log(str);
 			//clearInterval(options.wazeTimer);
@@ -273,24 +295,16 @@
 			
 				// reminder
 				//{"time":"1020 => 17:00","enabled":"true","logged":"day"}
-				if (this._this.options.logTimeAlert){
-					var logTimeAlert = this._this.options.logTimeAlert;
+				//if (this._this.options.logTimeAlert){
+					//var logTimeAlert = this._this.options.logTimeAlert;
+					var options = this._this.options;
 					var now = new Date();
-					if(logTimeAlert.enabled == 'true' && logTimeAlert.logged != now.getDay() && parseInt(logTimeAlert.time) < (now.getHours()*60+now.getMinutes())){
-						if(confirm("log time!")){
-							this._this.saveOptions({
-								'logTimeAlert':{
-									'enabled':'true',
-									'time':logTimeAlert.time,
-									'logged':now.getDay()
-								}
-							});
-							this._this.options.logTimeAlert.logged = now.getDay();
-						}else{
-							this._this.options.logTimeAlert.time = now.getHours()*60+now.getMinutes() + parseInt(_this.options.timeToRemainderRefresh);
-						}
+					//if(logTimeAlert.logged != now.getDay() && parseInt(logTimeAlert.time) < (now.getHours()*60+now.getMinutes())){
+					debugger;
+					if (options.logTimeConfirm_logged != now.getDay() && parseInt(options.logTimeConfirm_time) < (now.getHours()*60+now.getMinutes())){
+						$('#logTimeConfirm').show();
 					}
-				}
+				//}
 				// end reminder
 				
 				if (--this.seconds < 0){

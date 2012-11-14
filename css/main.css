@@ -87,3 +87,14 @@ font-size: 12px;
 border-radius: 9px;
 border-color: #777;
 }
+.kos_alertAreaAlert input[value=cansel]{
+position: absolute;
+top: 85px;
+left: 180px;
+height: 20px;
+line-height: 10px;
+width: 70px;
+font-size: 12px;
+border-radius: 9px;
+border-color: #777;
+}

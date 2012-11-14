@@ -2,7 +2,7 @@
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Popup</title>
+<title>Settings</title>
 <meta charset="utf-8">
 <script type="text/javascript" src="../js/jquery-1.7.js"></script>
 <script type="text/javascript" src="../js/db.jQuery.js"></script>
@@ -32,8 +32,16 @@
 	<input type = 'submit' name='add' value='add new'/>
 </form>
 
-<form name='cheackboxes'>
-	
+<form name='maps'>
+	<div class='title'>Maps links</div>
+	<ul>
+		<li><label>Text: <input type="text" value="google maps" required=""></label> <label>link: <input type="url" value="http://maps.google.com/maps?q={lat}+{lon}" required="" pattern="https?://.+"></label> <label>win+<input name='char' type='text' value='g' pattern='[a-z0-9]'/></label><input type="button" name="delete" value="delete"><input type="button" name="update_row" value="update"></li>
+		<li><label>Text: <input type="text" value="bing maps" required=""></label> <label>link: <input type="url" value="http://www.bing.com/maps/?v=2&cp={lat}~{lon}&lvl=18&dir=0&sty=o&where1={lat}%2C%20{lon}&form=LMLTCC" required="" pattern="https?://.+"></label> <label>win+<input name='char' type='text' value='b' pattern='[a-z0-9]'/></label><input type="button" name="delete" value="delete"><input type="button" name="update_row" value="update"></li>
+	</ul>
+	<input type = 'submit' name='save' value='save'/>
+	<input type = 'submit' name='reset' value='reset'/>
+	<input type = 'submit' name='default' value='default'/>
+	<input type = 'submit' name='add' value='add new'/>
 </form>
 
 <script type="text/javascript" src="../js/options.js"></script>

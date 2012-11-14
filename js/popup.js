@@ -9,7 +9,7 @@
 		                   ['timer','showTimer'],
 		                   ['area','areaDivMessage'],
 		                   ['alert','areaAlertMessage'],
-		                   ['logTime','logTimeAlert']
+		                   ['logTime','logTimeConfirm']
 		                   ];
 		var getBindfunction = function(key){
 			return function(){
