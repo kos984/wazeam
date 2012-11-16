@@ -51,13 +51,17 @@
 						 	['areaDivMessage','text','true'],
 						 	['areaAlertMessage','text','true'],
 						 	['showTimer','text','true'],
-						 	['timeToRemainderRefresh','text','5']
+						 	['timeToRemainderRefresh','text','5'],
+						 	['colorsCSSam','text','#900000'],
+						 	['colorsCSSing','text','#000090'],
+						 	['colorsCSSown','text','#008000']
 						 ]
 					},
 				static_links:{
 					name:'static_links',
 					fields:['id REAL UNIQUE', 'key TEXT UNIQUE', 'link TEXT'],
 					insertFieldsList:['key','link'],
+					srtuct:{key:'key',val:'link'},
 					rowToObj:function(result,i){
 						if (result == null){
 							return {'key':this.data[i][0],'val':this.data[i][1]};
@@ -75,6 +79,7 @@
 					name:'cartouches',
 					fields:['id REAL UNIQUE', 'key TEXT UNIQUE', 'link TEXT'],
 					insertFieldsList:['key','link'],
+					srtuct:{key:'key',val:'link'},
 					rowToObj:function(result,i){
 						if (result == null){
 							return {'key':this.data[i][0],'val':this.data[i][1]};
@@ -101,7 +106,7 @@
 				}
 				return '{'+json+'}';
 			},
-			db_version:'1.08',
+			db_version:'1.09',
 			// db object
 			db:function(){
 					var db = openDatabase("waze", "", "waze bd with setings and ...",30000);
@@ -142,6 +147,20 @@
 			//===============================================================================================================================
 			/**
 			 * @param {String} table table name
+			 */
+			getDefaultData:function(table){
+				var _this = $.db;
+				var def = {};
+				var tmp = undefined;
+				for (var i =0, n = _this._tables[table].data.length; i<n; i++){
+					tmp = _this._tables[table].rowToObj(null,i);
+					def[tmp.key] = tmp.val;
+				}
+				return def;
+			},
+			//===============================================================================================================================
+			/**
+			 * @param {String} table table name
 			 * @param {Function} callback function callback
 			 */
 			getData:function(table,callback){
@@ -178,6 +197,12 @@
 				});
 			},
 			//===============================================================================================================================
+			resetTableToDefault:function(table){
+				this.db().transaction(function(tx) {
+					_this._createTable(tx, null,table);
+				});
+			},
+			//===============================================================================================================================
 			/**
 			 * @todo need to compate
 			 */
@@ -193,7 +218,7 @@
 							val.replace(reg,jkey+':'+val);
 						}
 						
-						if(data.rows.lenght == 0){
+						if(data.rows.length == 0){
 							tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)",
 									[i,type,val],null,null);
 						} else {
@@ -204,6 +229,29 @@
 					function(tx, error){
 						//TODO: может надо сразу обновлять а может и нет :)
 						_this._createTable(tx, error,table);
+					});
+				});
+			},
+			//===============================================================================================================================
+			/**
+			 * srtuct:{key:'key',val:'link'},
+			 */
+			set:function(table,key,val){
+				var _this = this;
+				var srtuct = this._tables[table].srtuct;
+				this.db().transaction(function(tx) {
+					tx.executeSql("SELECT * FROM "+table+" WHERE "+srtuct.key+" = ?",[key],function(ex,data){
+						if(data.rows.length == 0){
+							var tmp =  _this._tables[table].insertFieldsList.join(', ');
+							var query = "INSERT INTO "+table+"("+tmp+") values("+tmp.replace(/\w+/g,'?')+")";
+							tx.executeSql(query,[key,val],null,null);
+						} else {
+							tx.executeSql("UPDATE "+table+" SET "+srtuct.val+" = ? WHERE "+srtuct.key+" = ?",
+									[val],null,null); 	
+						}
+					},
+					function(tx, error){
+						console.log(tx, error);
 					});
 				});
 			},
@@ -227,7 +275,7 @@
 									type = 'json';
 								}
 
-								if(data.rows.lenght == 0){
+								if(data.rows.length == 0){
 									tx.executeSql("INSERT INTO settings (key, type, value) values(?, ?, ?)",
 											[i,type,val],null,null);
 								} else {

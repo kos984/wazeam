@@ -7,11 +7,67 @@
 <script type="text/javascript" src="../js/jquery-1.7.js"></script>
 <script type="text/javascript" src="../js/db.jQuery.js"></script>
 <link rel="stylesheet" type="text/css"  href="../css/options.css" />
+<style>
+	/*#script_options > * {
+		display:inline-block;
+		position:relative;
+	}
+	#script_options {
+		position:relative;
+	}*/
+	#script_options label{
+		width: 260px;
+		display: inline-block;
+		position:relative;
+	}
+	#script_options label input{
+		position: absolute;
+		right:5px;
+		width: 60px;
+		text-align: center;
+	}
+	#script_options input[value="reset"]{
+		position: absolute;
+		left:350px;
+	}
+	#script_options input[value="update"]{
+		position: absolute;
+		left:400px;
+	}
+	#script_options li{
+		height:26px;
+	}
+	
+</style>
 </head>
 <body>
-<div>
-	'add'
-</div>
+ <form id = "script_options" name='scriptSettings'>
+	<div class='title'>Script options</div>
+	<ul>
+		<!-- logTimeConfirm_time text 840 -->
+		<li>
+			<label>Log time reminder time: <input type="number" name="logTimeConfirm_time" id="time" value='840' min='540' max='1080' required=""></label> <span class='time'>XX:XX</span> 
+			<input type="button" name="reset_row" value="reset">
+		</li>
+		<li>
+			<label>Reminder loop time: <input type="number" name="timeToRemainderRefresh" id="time_loop" value='5' min='1' max='60' required=""></label> 
+			<input type="button" name="reset_row" value="reset">
+		</li>
+		<li>
+			<label>Area managers text color <input type="color" name="colorsCSSam" id="a_color" value='#900000' required=""></label> 
+			<input type="button" name="reset_row" value="reset">
+		</li>
+		<li>
+			<label>Ignite mappers text color <input type="color" name="colorsCSSing" id="i_color" value='#000090' required=""></label> 
+			<input type="button" name="reset_row" value="reset">
+		</li>
+		<li>
+			<label>Your text color <input type="color" id="a_color" name="colorsCSSown" value='#008000' required=""></label>
+			<input type="button" name="reset_row" value="reset">
+		</li>
+	</ul>
+</form>
+
 <form name='usersLinks'>
 	<div class='title'>Users Links</div>
 	<ul>

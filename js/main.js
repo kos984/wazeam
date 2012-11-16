@@ -174,7 +174,7 @@
 					
 					var now = new Date();
 					_this.saveOptions({'logTimeConfirm_logged':now.getDay()});
-					$(this._vars.DOMConfirmLogTimeObject).addClass(this.options.hideCssClass);
+					$(_this._vars.DOMConfirmLogTimeObject).addClass(_this.options.hideCssClass);
 				});
 				$('#logTimeConfirm input[value=cansel]').bind('click'+this.eventNamespace,function(){
 					$('#logTimeConfirm').hide();
@@ -242,7 +242,8 @@
 					var test_vip = arr[j][VIPNAME].match(/\w+/)[0]; // get grom dark_lobito(4) --> dark_lobito
 					//add span
 					if (_this.vip[test_vip]){
-						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.vip[test_vip]+'" class='+_this.options.vipCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+						//elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.vip[test_vip]+'" class='+_this.options.vipCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.vip[test_vip]+'" class='+_this.options.vipCssClass+' style="color:'+_this.options.colorsCSSam+' !important">'+arr[j][VIPNAME]+'</span>'); });
 						if(_this.options.areaDivMessage == 'true'){
 							$(_this._vars.DOMareaAlertObject).show();
 							_this.options.areaDivMessage = false;
@@ -253,9 +254,11 @@
 							_this.options.areaAlertMessage = false;
 						}
 					}else if(_this._vars.own_name == test_vip){
-						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span class='+_this.options.ignOwnCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+						//elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span class='+_this.options.ignOwnCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span class='+_this.options.ignOwnCssClass+' style="color:'+_this.options.colorsCSSown+' !important">'+arr[j][VIPNAME]+'</span>'); });
 					}else if (_this.ign[test_vip] || test_vip.indexOf('ign_') == 0){
-						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.ign[test_vip]+'" class='+_this.options.ignCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+						//elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.ign[test_vip]+'" class='+_this.options.ignCssClass+'>'+arr[j][VIPNAME]+'</span>'); });
+						elem.html(function(){ return $(this).html().replace(arr[j][VIPNAME],'<span title="'+_this.ign[test_vip]+'" class='+_this.options.ignCssClass+' style="color:'+_this.options.colorsCSSign+' !important">'+arr[j][VIPNAME]+'</span>'); });
 					};
 				}; //end for j 
 			}; // end for i
@@ -300,7 +303,7 @@
 					var options = this._this.options;
 					var now = new Date();
 					//if(logTimeAlert.logged != now.getDay() && parseInt(logTimeAlert.time) < (now.getHours()*60+now.getMinutes())){
-					debugger;
+//					debugger;
 					if (options.logTimeConfirm_logged != now.getDay() && parseInt(options.logTimeConfirm_time) < (now.getHours()*60+now.getMinutes())){
 						$('#logTimeConfirm').show();
 					}
