@@ -60,14 +60,6 @@
 		return false;
 	});
 
-	//delete row 
-	$('form').on('click.delete','input[name=delete]',function(event){
-		$(this).parents('li').hide('slow',function(){
-			$(this).remove();
-		});
-		return false;
-	});
-	
 	//reset form
 	$('form').on('click.reset','input[name=reset]',function(event){
 		try{
@@ -94,6 +86,22 @@
 		var key = $li.find('input[name=key]').val();
 		var val = $li.find('input[name=val]').val();
 		$.db.set(table,key,val);
+		$li.append('<span class="saved">saved</span>');
+		$li.find('.saved').animate({'opacity':'0'},1000,function(){
+			$(this).remove();
+		});
+	});
+	//delete row
+	$('form[name=usersLinks],form[name=cartouche]').on('click.delete','input[name=delete]',function(){
+		if(!confirm('Are you sure?')) return false;
+		var table = $(this).parents('form').data('table');
+		var $li = $(this).parents('li');
+		var key = $li.find('input[name=key]').val();
+		$.db.del(table,key);
+		$li.hide('slow',function(){
+			$(this).remove();
+		});
+		return false;
 	});
 	
 	

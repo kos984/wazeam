@@ -69,3 +69,11 @@ border-color: #0A0;
 input[name=default]{
 background-color: #E00;
 border-color: #E00;}
+
+.saved{
+	color:yellow;
+}
+
+.notWorks{
+	background-color: #C88;
+}

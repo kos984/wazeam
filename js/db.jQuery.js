@@ -198,6 +198,7 @@
 			},
 			//===============================================================================================================================
 			resetTableToDefault:function(table){
+				var _this = this;
 				this.db().transaction(function(tx) {
 					_this._createTable(tx, null,table);
 				});
@@ -250,6 +251,16 @@
 									[val],null,null); 	
 						}
 					},
+					function(tx, error){
+						console.log(tx, error);
+					});
+				});
+			},
+			//===============================================================================================================================
+			del:function(table,key){
+				var srtuct = this._tables[table].srtuct;
+				this.db().transaction(function(tx) {
+					tx.executeSql("DELETE FROM "+table+" WHERE "+srtuct.key+" = ?",[key],null,
 					function(tx, error){
 						console.log(tx, error);
 					});

@@ -1,10 +1,7 @@
-//TODO: надо зделать confirm тоже на html
 //TODO: на следующию версию добавть возможность менять сочетания клавиш
+//TODO: добавить возможность менять сочитания клавиш и добавлять свои скрипты
 /*
  * tasks
- *  добавить страницу настроек
- *  вынести настройки css в веб морду
- *  logtime не работает !!!!
  */
 
 //test pages:
@@ -13,7 +10,6 @@
 
 //https://www.waze.com/editor/?zoom=5&lat=43.19994&lon=-96.29132&layers=BFTFFTTTFTTFTTFTFTTTTFT&segments=65384140
 
-//alert('sdfsdf');
 
 (function($){
 	//here my widget
@@ -54,10 +50,6 @@
 		// вносим изменения в DOM и вешаем обработчики
 		_create: function() {
 			_this = this;
-//this.links.bingMaps = 'http://www.bing.com/maps/?v=2&cp='+lat+'~'+lon+'&lvl=18&dir=0&sty=o&where1='+lat+'%2C%20'+lon+'&form=LMLTCC'
-//http://maps.google.com/maps?q=19.02162+-98.82437 //lat lon
-			//key ...
-			//91 - win
 				this.element.bind('keydown'+this.eventNamespace,function(event){
 					if(event.keyCode == 91)
 						_this._vars.winKey = true;
