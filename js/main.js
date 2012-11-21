@@ -165,7 +165,8 @@
 					$('#logTimeConfirm').hide();
 					
 					var now = new Date();
-					_this.saveOptions({'logTimeConfirm_logged':now.getDay()});
+					_this.saveOptions({'logTimeConfirm_logged':now.getDay()+''});
+					
 					$(_this._vars.DOMConfirmLogTimeObject).addClass(_this.options.hideCssClass);
 				});
 				$('#logTimeConfirm input[value=cansel]').bind('click'+this.eventNamespace,function(){
