@@ -34,10 +34,10 @@
 				if ( typeof link !== 'string' ){
 					continue;
 				}
-				str+= "<li><label>Text: <input type='text' value='"+key+"' required /></label> "+
-				"<label>link: <input type='url' value='"+link+"' required pattern='https?://.+' /></label>"+
-				"<input name='key' type='button' name='delete' value='delete'/>"+
-				"<input name='val' type='button' name='update_row' value='update'/></li>";
+				str+= "<li><label>Text: <input name='key' type='text' value='"+key+"' required /></label> "+
+				"<label>link: <input type='url' name='val' value='"+link+"' required pattern='https?://.+' /></label>"+
+				"<input type='button' name='delete' value='delete'/>"+
+				"<input type='button' name='update_row' value='update'/></li>";
 			}
 			$('form[name=cartouche] ul').html(function(){
 				var html = str;
